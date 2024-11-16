@@ -2,16 +2,17 @@ package main
 
 import (
   "net/http"
-
   "github.com/gin-gonic/gin"
+  "fmt"
 )
 
 func main() {
   r := gin.Default()
-  r.GET("/ping", func(c *gin.Context) {
-    c.JSON(http.StatusOK, gin.H{
-      "message": "pong",
-    })
+  r.GET("/", func(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+	  "message": "Hello World",
+	})
   })
-  r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+  fmt.Println("Server is running on port 8080")
+  http.ListenAndServe("localhost:8080", r)
 }
