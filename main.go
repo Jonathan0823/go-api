@@ -41,21 +41,21 @@ func getBookbyQuery(c *gin.Context){
 type BookInput struct {
   Title string `json:"title" binding:"required"`
   Author string `json:"author" binding:"required"`
+  Price int `json:"price" binding:"required,number"`
 }
 
 func postBook(c *gin.Context){
  var input BookInput
  err:= c.ShouldBindJSON(&input)
  if err != nil {
-    c.JSON(http.StatusBadRequest, gin.H{
-      "error": err.Error(),
-    })
+    c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
     return
   }
 
   c.JSON(http.StatusOK, gin.H{
     "title": input.Title,
     "author": input.Author,
+    "price": input.Price,
   })
 }
 
