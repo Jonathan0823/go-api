@@ -12,6 +12,7 @@ import (
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+  "go-api/book"
 )
 
 func main() {
@@ -27,13 +28,14 @@ func main() {
 		log.Fatal("DATABASE_URL is not set")
 	}
 
-  _, err := gorm.Open(postgres.Open(dburl), &gorm.Config{})
+  db, err := gorm.Open(postgres.Open(dburl), &gorm.Config{})
   if err != nil {
     log.Fatal("failed to connect database")
   }
 
   log.Println("Database connection established")
 
+  db.AutoMigrate(&book.Book{})
 
   v1 := r.Group("/v1")
     v1.GET("/", )
