@@ -9,6 +9,8 @@ import (
 func main() {
   r := gin.Default()
   r.GET("/", rootHandler)
+  r.GET("/books/:id", getbook)
+  r.GET("/books", getBookbyQuery)
 
   fmt.Println("Server is running at localhost:8080")
   http.ListenAndServe("localhost:8080", r)
@@ -17,6 +19,21 @@ func main() {
 func rootHandler(c *gin.Context){
 	c.JSON(http.StatusOK, gin.H{
 	"message": "Hello World",
+  })
+}
+
+func getbook(c *gin.Context){
+  id := c.Param("id")
+  c.JSON(http.StatusOK, gin.H{
+    "message": "You requested to get a book with id: " + id,
+  })
+}
+
+func getBookbyQuery(c *gin.Context){
+  title := c.Query("title")
+  author := c.Query("author")
+  c.JSON(http.StatusOK, gin.H{
+    "message": "You requested to get a book with title: " + title + " and author: " + author,
   })
 }
 
