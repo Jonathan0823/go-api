@@ -12,10 +12,12 @@ import (
 
 func main() {
   r := gin.Default()
-  r.GET("/", rootHandler)
-  r.GET("/books/:id", getbook)
-  r.GET("/books", getBookbyQuery)
-  r.POST("/books", postBook)
+
+  v1 := r.Group("/v1")
+    v1.GET("/", rootHandler)
+    v1.GET("/books/:id", getbook)
+    v1.GET("/books", getBookbyQuery)
+    v1.POST("/books", postBook)
 
   fmt.Println("Server is running at localhost:8080")
   http.ListenAndServe("localhost:8080", r)
