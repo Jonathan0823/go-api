@@ -1,9 +1,13 @@
 package main
 
 import (
-  "net/http"
-  "github.com/gin-gonic/gin"
-  "fmt"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 func main() {
@@ -41,16 +45,33 @@ func getBookbyQuery(c *gin.Context){
 type BookInput struct {
   Title string `json:"title" binding:"required"`
   Author string `json:"author" binding:"required"`
-  Price int `json:"price" binding:"required,number"`
+  Price json.Number `json:"price" binding:"required,number"`
 }
 
 func postBook(c *gin.Context){
  var input BookInput
  err:= c.ShouldBindJSON(&input)
- if err != nil {
-    c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+  if err != nil {
+  
+    var ve validator.ValidationErrors
+    if errors.As(err, &ve) {
+    errorMessages := []string{}
+      for _, e := range err.(validator.ValidationErrors) {
+        errorMessage := fmt.Sprintf("Error on field %s, condition: %s", e.Field(), e.ActualTag())
+        errorMessages = append(errorMessages, errorMessage)
+    }
+      c.JSON(http.StatusBadRequest, gin.H{
+        "error": errorMessages,
+      })
+      return
+    }
+    
+    c.JSON(http.StatusBadRequest, gin.H{
+      "error": err.Error(),
+    })
     return
-  }
+}
+  
 
   c.JSON(http.StatusOK, gin.H{
     "title": input.Title,
