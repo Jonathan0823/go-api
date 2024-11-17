@@ -2,15 +2,38 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 
 	"go-api/handler"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 func main() {
+  loadEnv := godotenv.Load()
+  if loadEnv != nil {
+    log.Fatal("Error loading .env file")
+  }
+
   r := gin.Default()
+
+  dburl := os.Getenv("DATABASE_URL")
+  if dburl == "" {
+		log.Fatal("DATABASE_URL is not set")
+	}
+
+  _, err := gorm.Open(postgres.Open(dburl), &gorm.Config{})
+  if err != nil {
+    log.Fatal("failed to connect database")
+  }
+
+  log.Println("Database connection established")
+
 
   v1 := r.Group("/v1")
     v1.GET("/", )
