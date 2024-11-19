@@ -6,7 +6,7 @@ type Repository interface {
 	FindAll() ([]Book, error)
 	FindByID(id int) (Book, error)
 	Create(book Book) (Book, error)
-	Update(book Book) (Book, error)
+	Update(id int, book Book) (Book, error)
 	Delete(id int) (Book, error)
 }
 
@@ -44,7 +44,7 @@ func (r repository) Create(book Book) (Book, error) {
 	return book, nil
 }
 
-func (r repository) Update(book Book) (Book, error) {
+func (r repository) Update(id int, book Book) (Book, error) {
 	err := r.db.Save(&book).Error
 	if err != nil {
 		return book, err
