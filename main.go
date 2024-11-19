@@ -38,16 +38,18 @@ func main() {
 
   //CRUD
 
-  book := book.Book{
-    Title: "The Great Gatsby",
-    Author: "F. Scott Fitzgerald",
-    Price: 10000,
-  }
+  // book := book.Book{
+  //   Title: "The Great Gatsby",
+  //   Author: "F. Scott Fitzgerald",
+  //   Price: 10000,
+  // }
 
-  err = db.Create(&book).Error
-  if err != nil {
-    fmt.Println(err.Error())
-  }
+  // err = db.Create(&book).Error
+  // if err != nil {
+  //   fmt.Println(err.Error())
+  // }
+
+  bookRepository := book.NewRepository(db)
 
   
 
