@@ -36,6 +36,7 @@ func GetBookbyQuery(c *gin.Context) {
 func PostBook(c *gin.Context) {
 	var input book.BookInput
 	err := c.ShouldBindJSON(&input)
+	
 	if err != nil {
 
 		var ve validator.ValidationErrors

@@ -21,22 +21,38 @@ func main() {
     log.Fatal("Error loading .env file")
   }
 
-  r := gin.Default()
-
+  
   dburl := os.Getenv("DATABASE_URL")
   if dburl == "" {
-		log.Fatal("DATABASE_URL is not set")
+    log.Fatal("DATABASE_URL is not set")
 	}
-
+  
   db, err := gorm.Open(postgres.Open(dburl), &gorm.Config{})
   if err != nil {
     log.Fatal("failed to connect database")
   }
-
+  
   log.Println("Database connection established")
-
+  
   db.AutoMigrate(&book.Book{})
 
+  //CRUD
+
+  book := book.Book{
+    Title: "The Great Gatsby",
+    Author: "F. Scott Fitzgerald",
+    Price: 10000,
+  }
+
+  err = db.Create(&book).Error
+  if err != nil {
+    fmt.Println(err.Error())
+  }
+
+  
+
+  r := gin.Default()
+  
   v1 := r.Group("/v1")
     v1.GET("/", )
     v1.GET("/books/:id", handler.Getbook)
