@@ -50,6 +50,7 @@ func main() {
   // }
 
   bookRepository := book.NewRepository(db)
+  bookService := book.NewService(bookRepository)
 
   
 
