@@ -36,18 +36,6 @@ func main() {
   
   db.AutoMigrate(&book.Book{})
 
-  //CRUD
-
-  // book := book.Book{
-  //   Title: "The Great Gatsby",
-  //   Author: "F. Scott Fitzgerald",
-  //   Price: 10000,
-  // }
-
-  // err = db.Create(&book).Error
-  // if err != nil {
-  //   fmt.Println(err.Error())
-  // }
 
   bookRepository := book.NewRepository(db)
   bookService := book.NewService(bookRepository)
