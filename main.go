@@ -51,6 +51,7 @@ func main() {
 
   bookRepository := book.NewRepository(db)
   bookService := book.NewService(bookRepository)
+  bookHandler := handler.NewHandler(bookService)
 
   
 
@@ -58,9 +59,9 @@ func main() {
   
   v1 := r.Group("/v1")
     v1.GET("/", )
-    v1.GET("/books/:id", handler.Getbook)
-    v1.GET("/books", handler.GetBookbyQuery)
-    v1.POST("/books", handler.PostBook)
+    v1.GET("/books/:id", bookHandler.Getbook)
+    v1.GET("/books", bookHandler.GetBookbyQuery)
+    v1.POST("/books", bookHandler.PostBook)
 
   fmt.Println("Server is running at localhost:8080")
   http.ListenAndServe("localhost:8080", r)

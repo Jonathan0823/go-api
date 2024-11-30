@@ -4,14 +4,14 @@ package book
 type Service interface {
 	FindAllBook() ([]Book, error)
 	FindBookByID(id int) (Book, error)
-	CreateBook(book BookInput) (Book, error)
-	UpdateBookByID(id int, book BookInput) (Book, error)
+	CreateBook(book Book) (Book, error)
+	UpdateBookByID(id int, book Book) (Book, error)
 	DeleteBookByID(id int) (Book, error)
 }
 
 type service struct {
 	repository Repository
-}
+}	
 
 func NewService(repository Repository) *service {
 	return &service{repository}

@@ -10,20 +10,28 @@ import (
 	"go-api/book"
 )
 
-func RootHandler(c *gin.Context) {
+type handler struct {
+	service book.Service
+}
+
+func NewHandler(service book.Service) *handler {
+	return &handler{service}
+}
+
+func (handler) RootHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Hello World",
 	})
 }
 
-func Getbook(c *gin.Context) {
+func (handler) Getbook(c *gin.Context) {
 	id := c.Param("id")
 	c.JSON(http.StatusOK, gin.H{
 		"message": "You requested to get a book with id: " + id,
 	})
 }
 
-func GetBookbyQuery(c *gin.Context) {
+func (handler) GetBookbyQuery(c *gin.Context) {
 	title := c.Query("title")
 	author := c.Query("author")
 	c.JSON(http.StatusOK, gin.H{
@@ -33,7 +41,7 @@ func GetBookbyQuery(c *gin.Context) {
 
 
 
-func PostBook(c *gin.Context) {
+func (handler) PostBook(c *gin.Context) {
 	var input book.BookInput
 	err := c.ShouldBindJSON(&input)
 	
