@@ -4,10 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
+
+	"go-api/book"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"go-api/book"
 )
 
 type handler struct {
@@ -18,31 +20,76 @@ func NewHandler(service book.Service) *handler {
 	return &handler{service}
 }
 
-func (handler) RootHandler(c *gin.Context) {
+func (h *handler) RootHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Hello World",
 	})
 }
 
-func (handler) Getbook(c *gin.Context) {
+func (h *handler) Getbook(c *gin.Context) {
 	id := c.Param("id")
+	bookID, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid book ID",
+		})
+		return
+	}
+	
+	book, err := h.service.FindBookByID(bookID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"message": "You requested to get a book with id: " + id,
+		"data": book,
 	})
 }
 
-func (handler) GetBookbyQuery(c *gin.Context) {
+func (h *handler) GetBookbyQuery(c *gin.Context) {
 	title := c.Query("title")
 	author := c.Query("author")
+	price := c.Query("price")
+
+	books, err := h.service.FindAllBook()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	filteredBooks := []book.Book{}
+	for _, b := range books {
+		if title != "" {
+			if b.Title == title {
+				filteredBooks = append(filteredBooks, b)
+			}
+		}
+		if author != "" {
+			if b.Author == author {
+				filteredBooks = append(filteredBooks, b)
+			}
+		}
+		if price != "" {
+			if strconv.Itoa(b.Price) == price {
+				filteredBooks = append(filteredBooks, b)
+			}
+		}
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"message": "You requested to get a book with title: " + title + " and author: " + author,
+		"data": filteredBooks,
 	})
 }
 
 
 
-func (handler) PostBook(c *gin.Context) {
-	var input book.BookInput
+func (h *handler) PostBook(c *gin.Context) {
+	var input book.Book
 	err := c.ShouldBindJSON(&input)
 	
 	if err != nil {
@@ -66,9 +113,32 @@ func (handler) PostBook(c *gin.Context) {
 		return
 	}
 
+	book, err := h.service.CreateBook(input)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+
+
 	c.JSON(http.StatusOK, gin.H{
-		"title":  input.Title,
-		"author": input.Author,
-		"price":  input.Price,
+		"data": book,
+	})
+}
+
+
+func (h *handler) GetBookAll(c *gin.Context) {
+	books, err := h.service.FindAllBook()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"data": books,
 	})
 }

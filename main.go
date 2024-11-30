@@ -62,6 +62,7 @@ func main() {
     v1.GET("/books/:id", bookHandler.Getbook)
     v1.GET("/books", bookHandler.GetBookbyQuery)
     v1.POST("/books", bookHandler.PostBook)
+    v1.GET("/books/all", bookHandler.GetBookAll)
 
   fmt.Println("Server is running at localhost:8080")
   http.ListenAndServe("localhost:8080", r)
